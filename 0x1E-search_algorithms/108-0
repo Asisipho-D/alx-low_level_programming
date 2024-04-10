@@ -1,0 +1,66 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+/* Node structure for skip list */
+typedef struct Node {
+    int data;
+    struct Node *right, *down;
+} Node;
+
+/**
+ * jump_search_skip_list - Searches for a value in a skip list using jump search algorithm
+ * @head: Pointer to the head of the skip list
+ * @size: Size of the skip list
+ * @value: Value to search for
+ *
+ * Return: 1 if value is found, 0 otherwise
+ */
+int jump_search_skip_list(Node *head, size_t size, int value)
+{
+    int step = sqrt(size); // Calculate the jump step
+
+    /* Start from the top-left corner */
+    Node *curr = head;
+
+    /* Traverse the skip list */
+    while (curr != NULL)
+    {
+        /* Traverse horizontally */
+        while (curr->right != NULL && curr->right->data < value)
+            curr = curr->right;
+
+        /* If current value is equal to target value */
+        if (curr->right != NULL && curr->right->data == value)
+            return 1;
+
+        /* Move down */
+        curr = curr->down;
+
+        /* Move right if step allows */
+        for (int i = 0; i < step && curr != NULL; i++)
+            curr = curr->right;
+    }
+
+    return 0; // Value not found
+}
+
+/* Main function */
+int main(void)
+{
+    /* Example usage */
+    Node *head = NULL;
+    size_t size = 10; // Example size
+    int value = 5;    // Example value
+
+    /* Call jump_search_skip_list */
+    int result = jump_search_skip_list(head, size, value);
+
+    /* Print result */
+    if (result)
+        printf("Value %d found\n", value);
+    else
+        printf("Value %d not found\n", value);
+
+    return 0;
+}

@@ -1,0 +1,87 @@
+#include <stdio.h>
+#include <math.h>
+
+/* Linked list node structure */
+typedef struct Node {
+    int data;
+    struct Node *next;
+} Node;
+
+/**
+ * jump_search - Searches for a value in a singly linked list using jump search algorithm
+ * @head: Pointer to the head of the linked list
+ * @size: Size of the linked list
+ * @value: Value to search for
+ *
+ * Return: Pointer to the node containing the value if found, otherwise NULL
+ */
+Node *jump_search(Node *head, size_t size, int value)
+{
+    int step = sqrt(size); // Calculate the jump step
+    Node *prev = NULL, *curr = head;
+
+    // Jumping forward through blocks
+    while (curr && curr->data < value)
+    {
+        prev = curr;
+        for (int i = 0; i < step && curr->next; i++)
+            curr = curr->next;
+    }
+
+    // Performing linear search in the current block
+    while (prev && prev->data < value)
+        prev = prev->next;
+
+    return prev;
+}
+
+/* Function to insert a node at the beginning of the linked list */
+Node *insert(Node *head, int data)
+{
+    Node *new_node = malloc(sizeof(Node));
+    if (new_node == NULL)
+    {
+        perror("malloc");
+        exit(EXIT_FAILURE);
+    }
+
+    new_node->data = data;
+    new_node->next = head;
+    return new_node;
+}
+
+/* Function to print the linked list */
+void print_list(Node *head)
+{
+    Node *temp = head;
+    while (temp)
+    {
+        printf("%d ", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+/* Main function */
+int main(void)
+{
+    Node *head = NULL;
+    size_t size = 0;
+
+    // Inserting elements into the linked list
+    for (int i = 10; i >= 1; i--)
+    {
+        head = insert(head, i);
+        size++;
+    }
+
+    int value = 5;
+    Node *result = jump_search(head, size, value);
+
+    if (result && result->data == value)
+        printf("Value %d found\n", value);
+    else
+        printf("Value %d not found\n", value);
+
+    return 0;
+}
